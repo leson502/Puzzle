@@ -22,9 +22,9 @@ int Puzzle::getIndex(int i,int j)
 
 void Puzzle::move(int i,int j)
 {
-    if (i<-1 || i>1 || j<-1 || j>1) return;
-    if ((x+i)<0 || (x+i)>2 || (y+j)<0 || (y+j)>2) return;
-    swap(matrix[x][y],matrix[x+i][y+j]);
-    x+=i;
-    y+=j;
+    if (i<0 || i>2 || j<0 || i>2) return;
+    if (abs(x-i)>1 || abs(y-j)>1 ) return;
+    swap(matrix[x][y],matrix[i][j]);
+    x=i;
+    y=j;
 }
