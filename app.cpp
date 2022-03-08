@@ -10,6 +10,7 @@ void App::defaultApp()
     setGraphic();
     setPuzzle();
     setTiles();
+    event = new Event();
 }
 
 void App::setGraphic()
@@ -42,10 +43,49 @@ void App::setPuzzle()
     puzzle = p_puzzle;
 }
 
-void App::updatePresent()
+void App::updateRender()
 {
+    for (int i=0; i<PUZZLE_SIZE; i++)
+        for (int j=0; j<PUZZLE_SIZE; j++)
+            tiles[puzzle->getIndex(i,j)].setPos(j*BLOCKSIZE,i*BLOCKSIZE);
     for (int i=0; i<TILES_NUM; i++)
         graphic->DrawTexture(tiles[i].getTexture(),
                             tiles[i].getPosx(),tiles[i].getPosy());
     graphic->renderPresent();
+}
+
+void App::updatePuzzle()
+{
+    event->updateEvent();
+    if (event->isLbuttonDown())
+    {
+        int j = event->MousePosX()/BLOCKSIZE;
+        int i = event->MousePosY()/BLOCKSIZE;
+        puzzle->move(i,j);
+    }
+}
+
+void App::appLoop()
+{
+    while (true)
+    {
+        updatePuzzle();
+        updateRender();
+        if (event->isQuit()) 
+            break;
+        SDL_Delay(16);
+    }
+}
+
+void App::AppQuit()
+{
+    delete tiles;
+    delete puzzle;
+    delete event;
+    delete graphic;
+}
+
+App::~App()
+{
+    AppQuit();
 }
