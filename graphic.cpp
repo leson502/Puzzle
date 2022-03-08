@@ -7,8 +7,8 @@ Graphic:: Graphic()
 
 void Graphic::DefaultGraphic()
 {
-    window = NULL;
-    renderer = NULL;
+    window = nullptr;
+    renderer = nullptr;
 }
 
 SDL_Window*  Graphic:: getWindow(){
@@ -71,4 +71,10 @@ void Graphic::DrawTexture(SDL_Texture *texture, int x,int y)
 void Graphic::renderPresent()
 {
     SDL_RenderPresent(renderer);
+}
+
+Graphic::~Graphic()
+{
+    QuitSDL();
+    DefaultGraphic();
 }

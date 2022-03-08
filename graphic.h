@@ -8,6 +8,7 @@ private:
 
 public:
     Graphic();
+    ~Graphic();
     void DefaultGraphic();
     SDL_Window *getWindow();
     SDL_Renderer *getRenderer();
