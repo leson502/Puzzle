@@ -6,3 +6,8 @@ void swap(int &A, int &B)
     A = B;
     B = temp;
 }
+
+int abs(const int &A)
+{
+    return (A>0) ? A : -A;
+}
