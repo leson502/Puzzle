@@ -4,6 +4,7 @@
 int main(int argc,char *argv[])
 {
     App *app = new App;
-    app->updatePresent();
-    SDL_Delay(5000);
+    app->appLoop();
+    delete app;
+    return 0;
 }
