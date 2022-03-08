@@ -24,6 +24,7 @@ void Puzzle::move(int i,int j)
 {
     if (i<0 || i>2 || j<0 || i>2) return;
     if (abs(x-i)>1 || abs(y-j)>1 ) return;
+    if (abs(x-i)>0 && abs(y-j)>0) return;
     swap(matrix[x][y],matrix[i][j]);
     x=i;
     y=j;
