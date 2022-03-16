@@ -50,7 +50,7 @@ void App::updateRender()
             tiles[puzzle->getIndex(i,j)].setPos(j*BLOCKSIZE,i*BLOCKSIZE);
     for (int i=0; i<TILES_NUM; i++)
         graphic->DrawTexture(tiles[i].getTexture(),
-                            tiles[i].getPosx(),tiles[i].getPosy());
+                            tiles[i].getPosx()+PUZZLE_ORIGIN_X,tiles[i].getPosy()+PUZZLE_ORIGIN_Y);
     graphic->renderPresent();
 }
 
@@ -59,8 +59,8 @@ void App::updatePuzzle()
     event->updateEvent();
     if (event->isLbuttonDown())
     {
-        int j = event->MousePosX()/BLOCKSIZE;
-        int i = event->MousePosY()/BLOCKSIZE;
+        int j = (event->MousePosX()-PUZZLE_ORIGIN_X)/BLOCKSIZE;
+        int i = (event->MousePosY()-PUZZLE_ORIGIN_Y)/BLOCKSIZE;
         puzzle->move(i,j);
     }
 }
