@@ -45,10 +45,11 @@ void App::setPuzzle()
 
 void App::updateRender()
 {
+    SDL_RenderClear(graphic->getRenderer());
     for (int i=0; i<PUZZLE_SIZE; i++)
         for (int j=0; j<PUZZLE_SIZE; j++)
             tiles[puzzle->getIndex(i,j)].setPos(j*BLOCKSIZE,i*BLOCKSIZE);
-    for (int i=0; i<TILES_NUM; i++)
+    for (int i=1; i<TILES_NUM; i++)
         graphic->DrawTexture(tiles[i].getTexture(),
                             tiles[i].getPosx()+PUZZLE_ORIGIN_X,tiles[i].getPosy()+PUZZLE_ORIGIN_Y);
     graphic->renderPresent();
