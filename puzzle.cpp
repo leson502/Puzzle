@@ -23,9 +23,9 @@ int Puzzle::getIndex(int i,int j)
 void Puzzle::move(int i,int j)
 {
     if (i<0 || i>2 || j<0 || i>2) return;
-    if (abs(x-i)>1 || abs(y-j)>1 ) return;
-    if (abs(x-i)>0 && abs(y-j)>0) return;
-    swap(matrix[x][y],matrix[i][j]);
+    if (x-i>1 || y-j>1 || x-i<-1 || y-j<-1) return;
+    if ((x-i>0 || x-i<0 ) && (y-j>0 || y-j <0)) return;
+    swap(&matrix[x][y],&matrix[i][j]);
     x=i;
     y=j;
 }
