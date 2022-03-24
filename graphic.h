@@ -1,3 +1,6 @@
+#ifndef GRAPHIC__H
+#define GRAPHIC__H
+
 #include "base.h"
 
 class Graphic
@@ -15,10 +18,11 @@ public:
     void InitSDL(unsigned int windowFlags,
             unsigned int rendererFlags);
     void QuitSDL();
-    SDL_Texture *loadTexture(std::string& filename);
+    SDL_Texture *loadTexture(const std::string& filename);
     void DrawTexture(SDL_Texture *texture, int x, int y);
     void renderPresent();
 };
 
+#endif
 
 

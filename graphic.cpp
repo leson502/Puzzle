@@ -46,7 +46,7 @@ void Graphic:: QuitSDL()
 }
 
 
-SDL_Texture *Graphic::loadTexture(std::string& filename)
+SDL_Texture *Graphic::loadTexture(const std::string& filename)
     {
         SDL_Texture *texture;
 

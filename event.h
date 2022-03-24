@@ -1,3 +1,6 @@
+#ifndef EVENT__H
+#define EVENT__H
+
 #include "base.h"
 
 class Event
@@ -17,3 +20,4 @@ public:
     bool isQuit();
 };
  
+#endif
