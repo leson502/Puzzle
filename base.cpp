@@ -20,3 +20,10 @@ void logGeneralError(std::ostream &os,std::string msg, bool fatal)
         exit(1);
     }
 }
+
+void swap(int *A, int *B)
+{
+    int temp = *A;
+    *A = *B;
+    *B = temp;
+}

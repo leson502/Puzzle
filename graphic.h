@@ -1,5 +1,5 @@
-#ifndef GRAPHIC__H
-#define GRAPHIC__H
+#ifndef H_GRAPHIC
+#define H_GRAPHIC
 
 #include "base.h"
 

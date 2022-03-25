@@ -1,7 +1,8 @@
-#ifndef APP__H
-#define APP__H
+#ifndef H_APP
+#define H_APP
 
 #include "graphic.h"
+#include "base_object.h"
 #include "puzzle.h"
 #include "event.h"
 
@@ -11,10 +12,11 @@ private:
     Graphic *graphic;
     Puzzle *puzzle;
     Event *event;
-    SDL_Texture *background;
+    Object *background;
 public:
     App();
     ~App();
+    void loadAllTexture();
     void defaultApp();
     void setGraphic();
     void setPuzzle();

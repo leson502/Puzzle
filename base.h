@@ -1,5 +1,5 @@
-#ifndef BASE__H
-#define BASE__H
+#ifndef H_BASE
+#define H_BASE
 
 #include <iostream>
 #include <fstream>
@@ -18,6 +18,7 @@
 
 void logSDLerror(std::ostream &os,std::string msg, bool fatal);
 void logGeneralError(std::ostream &os,std::string msg, bool fatal);
+void swap(int *A, int *B);
 
 #endif
 

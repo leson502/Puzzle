@@ -1,8 +1,8 @@
-#ifndef PUZZE__H
-#define PUZZE__H
+#ifndef H_PUZZE
+#define H_PUZZE
 
 
-#include "common.h"
+#include "base.h"
 #include "base_object.h"
 
 #define PUZZLE_SIZE 3
@@ -17,15 +17,19 @@ class Puzzle
 private:
    int **matrix;
    int *x,*y;
-   Object *tiles;
+   std::vector<SDL_Rect*> t_pos,t_struct;
+   SDL_Texture *texture;
 public:
     Puzzle();
+    ~Puzzle();
     void memoryAllocate();
     void defaultPuzzle();
-    void setTexture(std::vector<SDL_Texture*> &_texture);
+    void setTexture(SDL_Texture *texture);
     void blitPuzzle(SDL_Renderer *render_target,  bool blitFlags);
     void updateTilesPos();
     void setTilesSize();
+    void splitPicture();
+    void destroyPuzzle();
     void move(int i,int j);
     int getIndex(int i,int j);
 };

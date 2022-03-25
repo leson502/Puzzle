@@ -1,5 +1,5 @@
-#ifndef EVENT__H
-#define EVENT__H
+#ifndef H_EVENT
+#define H_EVENT
 
 #include "base.h"
 

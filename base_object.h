@@ -1,5 +1,5 @@
-#ifndef BASE_OBJECT__H
-#define BASE_OBJECT__H
+#ifndef H_BASE_OBJECT
+#define H_BASE_OBJECT
 
 #include "base.h"
 

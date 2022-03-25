@@ -9,6 +9,7 @@ void App::defaultApp()
 {
     setGraphic();
     setPuzzle();
+    loadAllTexture();
     event = new Event();
 }
 
@@ -22,25 +23,27 @@ void App::setGraphic()
 void App::setPuzzle()
 {
     puzzle = new Puzzle();
-    loadPuzzleTexture();
 }
 
 void App::loadPuzzleTexture()
 {
-    std::string puzzlefiles ="gfx/puzzle1/num_.png";
-    std::vector<SDL_Texture*> _texture;
-    for (int i = 0; i<TILES_NUM; i++) 
-    {
-        puzzlefiles[15] = i +'0';
-        _texture.push_back(graphic->loadTexture(puzzlefiles));
-    }
-    puzzle->setTexture(_texture);
+    std::string puzzlefiles ="gfx/puzzle1.png";
+    puzzle->setTexture(graphic->loadTexture(puzzlefiles));
 }
 
+void App::loadAllTexture()
+{
+    loadPuzzleTexture();
+    std::string filename = "gfx/background.png";
+    background = new Object;
+    background->setPos(0,0);
+    background->setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
+    background->setTexture(graphic->loadTexture(filename));
+}
 void App::updateRender()
 {
-    SDL_RenderClear(graphic->getRenderer());
-    SDL_SetRenderDrawColor(graphic->getRenderer(), 96, 128, 255, 255);
+    SDL_RenderClear(graphic->getRenderer());    
+    background->blit(graphic->getRenderer());
     puzzle->blitPuzzle(graphic->getRenderer(), 1);
     graphic->renderPresent();
 }
