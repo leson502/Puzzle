@@ -35,3 +35,8 @@ void Object::blit(SDL_Renderer *render_target)
 {
     SDL_RenderCopy(render_target, texture, NULL, rect);
 }
+
+SDL_Texture *Object::getTexture()
+{
+    return texture;
+}

@@ -19,7 +19,7 @@ SDL_Renderer* Graphic:: getRenderer()
     return renderer;
 }
 void Graphic:: InitSDL(unsigned int windowFlags,
-            unsigned int rendererFlags)
+            unsigned int rendererFlags, std::string &fontfilename)
 {
    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
         logSDLerror(std::cout, "SDL Init",1);
@@ -36,6 +36,8 @@ void Graphic:: InitSDL(unsigned int windowFlags,
         logSDLerror(std::cout, "SDL create renderer", 1); 
 
     SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    mainFont = TTF_OpenFont(fontfilename.c_str(), FONT_SIZE);
 }
 
 void Graphic:: QuitSDL()

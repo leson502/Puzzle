@@ -16,34 +16,42 @@ void App::defaultApp()
 void App::setGraphic()
 {
     graphic = new Graphic;
+    std::string fontfilename = "font/Roboto-Light.ttf";
     graphic->InitSDL(SDL_WINDOW_SHOWN,SDL_RENDERER_ACCELERATED | 
-                                SDL_RENDERER_PRESENTVSYNC);
+                                SDL_RENDERER_PRESENTVSYNC, fontfilename);
 }
 
 void App::setPuzzle()
 {
     puzzle = new Puzzle();
+    leftbar = new PuzzleBar();
 }
 
 void App::loadPuzzleTexture()
 {
-    std::string puzzlefiles ="gfx/puzzle1.png";
-    puzzle->setTexture(graphic->loadTexture(puzzlefiles));
+    leftbar->loadObject(graphic->getRenderer());
+    puzzle->setTexture(leftbar->GetNewTexture());
+}
+
+void App::loadBackground()
+{
+    std::string filename = "gfx/background.png";
+    background = new Object;
+    background->setPos(0,0);
+    background->setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+    background->setTexture(graphic->loadTexture(filename));
 }
 
 void App::loadAllTexture()
 {
     loadPuzzleTexture();
-    std::string filename = "gfx/background.png";
-    background = new Object;
-    background->setPos(0,0);
-    background->setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
-    background->setTexture(graphic->loadTexture(filename));
+    loadBackground();
 }
 void App::updateRender()
 {
     SDL_RenderClear(graphic->getRenderer());    
     background->blit(graphic->getRenderer());
+    leftbar->Blit(graphic->getRenderer());
     puzzle->blitPuzzle(graphic->getRenderer(), 1);
     graphic->renderPresent();
 }
@@ -51,22 +59,18 @@ void App::updateRender()
 void App::updatePuzzle()
 {
     event->updateEvent();
-    if (event->isLbuttonDown())
-    {
-        int j = (event->MousePosX()-PUZZLE_ORIGIN_X)/BLOCKSIZE;
-        int i = (event->MousePosY()-PUZZLE_ORIGIN_Y)/BLOCKSIZE;
-        puzzle->move(i,j);
-    }
+
+    puzzle->MouseProcess(event->MousePosX(),event->MousePosY(),event->isLbuttonDown());
+    if ( leftbar->MouseProcess(event->MousePosX(),event->MousePosY(),event->isLbuttonDown()) ) 
+        puzzle->setTexture(leftbar->GetNewTexture());
 }
 
 void App::appLoop()
 {
-    while (true)
+    while (!event->isQuit())
     {
         updateRender();
         updatePuzzle();
-        if (event->isQuit()) 
-            break;
         SDL_Delay(16);
     }
 }
@@ -78,6 +82,11 @@ void App::AppQuit()
     delete graphic;
 }
 
+void App::Play()
+{
+    puzzle->Suffer();
+    appLoop();
+}
 App::~App()
 {
     AppQuit();
