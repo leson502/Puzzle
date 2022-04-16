@@ -7,7 +7,7 @@
 
 const int PUZZLE_SIZE = 3;
 const int TILES_NUM = PUZZLE_SIZE*PUZZLE_SIZE;
-const int fractor[]={1,1,2,6,24,120,720,5040,40320,362880};
+
 // down, left, right, up
 const int row[] = { 1, 0, -1, 0 };
 const int col[] = { 0, -1, 0, 1 };
@@ -20,6 +20,7 @@ private:
    std::vector<SDL_Rect*> t_pos,t_struct;
    SDL_Texture *texture;
    SDL_Rect *border, *p_struct;
+   
 public:
     Puzzle();
     ~Puzzle();
@@ -28,7 +29,6 @@ public:
     void setTexture(SDL_Texture *_texture);
     void blitPuzzle(SDL_Renderer *render_target,  bool blitFlags);
     void updateTilesPos();
-    void setTilesSize();
     void splitPicture();
     void destroyPuzzle();
     int Getinversion();
@@ -38,4 +38,3 @@ public:
 };
 
 #endif
-

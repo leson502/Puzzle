@@ -26,10 +26,6 @@ void Object::setSize(int w,int h)
     rect->h = h;
 }
 
-void Object::setTexture(SDL_Texture *p_texture)
-{
-    texture = p_texture;
-}
 
 void Object::blit(SDL_Renderer *render_target)
 {
@@ -39,4 +35,10 @@ void Object::blit(SDL_Renderer *render_target)
 SDL_Texture *Object::getTexture()
 {
     return texture;
+}
+
+void Object::loadTexture(SDL_Renderer *render_target, std::string &filename)
+{
+    texture = IMG_LoadTexture(render_target, filename.c_str());
+    //SDL_Log("Loading %s",filename.c_str());
 }

@@ -39,7 +39,7 @@ void App::loadBackground()
     background = new Object;
     background->setPos(0,0);
     background->setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-    background->setTexture(graphic->loadTexture(filename));
+    background->loadTexture(graphic->getRenderer(), filename);
 }
 
 void App::loadAllTexture()
@@ -47,12 +47,15 @@ void App::loadAllTexture()
     loadPuzzleTexture();
     loadBackground();
 }
+
 void App::updateRender()
 {
     SDL_RenderClear(graphic->getRenderer());    
+
     background->blit(graphic->getRenderer());
     leftbar->Blit(graphic->getRenderer());
     puzzle->blitPuzzle(graphic->getRenderer(), 1);
+
     graphic->renderPresent();
 }
 
@@ -61,8 +64,9 @@ void App::updatePuzzle()
     event->updateEvent();
 
     puzzle->MouseProcess(event->MousePosX(),event->MousePosY(),event->isLbuttonDown());
-    if ( leftbar->MouseProcess(event->MousePosX(),event->MousePosY(),event->isLbuttonDown()) ) 
+    if ( leftbar->MouseProcess(event->MousePosX(),event->MousePosY(),event->isLbuttonDown()) )
         puzzle->setTexture(leftbar->GetNewTexture());
+    puzzle->updateTilesPos();
 }
 
 void App::appLoop()
@@ -80,6 +84,8 @@ void App::AppQuit()
     delete puzzle;
     delete event;
     delete graphic;
+    delete background;
+    delete leftbar;
 }
 
 void App::Play()

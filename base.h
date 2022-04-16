@@ -29,6 +29,6 @@ void swap(int *A, int *B);
 int max(const int A, const int B);
 int min(const int A, const int B);
 void setRect(SDL_Rect* rect,const int x, const int y, const int w, const int h);
+int abs(int A);
 
 #endif
-

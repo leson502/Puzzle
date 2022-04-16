@@ -3,15 +3,19 @@
 
 #include "base.h"
 
+const int TIME = 60;
 class Clock
 {
 private:
-    
+    int lastTick;
+    int count;
 public:
-    Clock(/* args */);
+    Clock();
+    void ResetClock();
+    int GetMinutes();
+    int GetSecond();
+    void UpdateTick();
     ~Clock();
 };
-
-
 
 #endif

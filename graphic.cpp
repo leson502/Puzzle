@@ -7,8 +7,9 @@ Graphic:: Graphic()
 
 void Graphic::DefaultGraphic()
 {
-    window = nullptr;
-    renderer = nullptr;
+    window = NULL;
+    renderer = NULL;
+    mainFont = NULL;
 }
 
 SDL_Window*  Graphic:: getWindow(){
@@ -37,6 +38,8 @@ void Graphic:: InitSDL(unsigned int windowFlags,
 
     SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
+    if (TTF_Init() < 0) 
+        SDL_Log("%s", TTF_GetError());
     mainFont = TTF_OpenFont(fontfilename.c_str(), FONT_SIZE);
 }
 
@@ -51,8 +54,6 @@ void Graphic:: QuitSDL()
 SDL_Texture *Graphic::loadTexture(const std::string& filename)
     {
         SDL_Texture *texture;
-
-        //SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, "Loading %s", filename.c_str());
 
         texture = IMG_LoadTexture(renderer , filename.c_str());
     

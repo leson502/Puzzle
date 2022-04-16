@@ -35,11 +35,10 @@ void Puzzle::defaultPuzzle()
     x = PUZZLE_SIZE-1;
     y = PUZZLE_SIZE-1;
 
-    updateTilesPos();
-    setTilesSize();
 
     setRect(border,PUZZLE_ORIGIN_X, PUZZLE_ORIGIN_Y, PUZZLEZONE, PUZZLEZONE);
     setRect(p_struct, 0, 0, PUZZLEZONE, PUZZLEZONE);
+    
 }
 
 void Puzzle::move(int i,int j)
@@ -50,7 +49,7 @@ void Puzzle::move(int i,int j)
             swap(&matrix[x][y],&matrix[i][j]);
             x=i;
             y=j;
-            updateTilesPos();
+            //updateTilesPos();
             break;
         }
 }
@@ -64,17 +63,15 @@ void Puzzle::setTexture(SDL_Texture* _texture)
 void Puzzle::blitPuzzle(SDL_Renderer *render_target, bool blitFlags)
 {
     // render image background
-    SDL_SetTextureAlphaMod(texture,255);
-    SDL_SetTextureColorMod(texture, 48,48,48);
+    SDL_SetTextureColorMod(texture, 48,48,48); // darker color
     SDL_RenderCopy(render_target, texture, p_struct, border);
 
     // render tiles
-    SDL_SetTextureAlphaMod(texture,255);
-    SDL_SetTextureColorMod(texture, 255,255,255);
+    SDL_SetTextureColorMod(texture, 255,255,255); // full color
+    SDL_SetRenderDrawColor(render_target, 0, 0 ,0 ,255);
     for (int i=blitFlags; i<TILES_NUM; i++)
     {
         SDL_RenderCopy(render_target, texture, t_struct[i], t_pos[i]);
-        SDL_SetRenderDrawColor(render_target, 0, 0 ,0 ,255);
         SDL_RenderDrawRect(render_target, t_pos[i]);
     }
 
@@ -87,15 +84,26 @@ void Puzzle::updateTilesPos()
     for (int i=0; i<PUZZLE_SIZE; i++)
         for (int j=0; j<PUZZLE_SIZE; j++)
             {
-                t_pos[matrix[i][j]]->x = j*(PUZZLEZONE/PUZZLE_SIZE) + PUZZLE_ORIGIN_X;
-                t_pos[matrix[i][j]]->y = i*(PUZZLEZONE/PUZZLE_SIZE) + PUZZLE_ORIGIN_Y;
+                int vecX = (j*(PUZZLEZONE/PUZZLE_SIZE) + PUZZLE_ORIGIN_X)-t_pos[matrix[i][j]]->x;
+                int vecY = (i*(PUZZLEZONE/PUZZLE_SIZE) + PUZZLE_ORIGIN_Y)-t_pos[matrix[i][j]]->y;
+                
+                for (int div=4; div>1; div/=2)
+                        if (abs(vecX)>=div) 
+                        {
+                            vecX/=div;
+                            break;
+                        }
+                for (int div=4; div>1; div/=2)
+                        if (abs(vecY)>=div) 
+                        {
+                            vecY/=div;
+                            break;
+                        }
+                        
+                //SDL_Log("%d %d",vecX,vecY);
+                t_pos[matrix[i][j]]->x += vecX;
+                t_pos[matrix[i][j]]->y += vecY;
             }
-}
-
-void Puzzle::setTilesSize()
-{
-    for (int i=0; i<TILES_NUM; i++)
-        t_pos[i]->h = t_pos[i]->w = (PUZZLEZONE/PUZZLE_SIZE);
 }
 
 void Puzzle::splitPicture() 
@@ -110,6 +118,9 @@ void Puzzle::splitPicture()
             int index = (i*PUZZLE_SIZE+j+1)%TILES_NUM;
             setRect(t_struct[index],j * t_width,
                     i * t_height, t_width, t_height);
+            setRect(t_pos[index], PUZZLE_ORIGIN_X
+                    , PUZZLE_ORIGIN_Y, PUZZLEZONE/PUZZLE_SIZE,
+                    PUZZLEZONE/PUZZLE_SIZE );
         }      
 }
 
@@ -120,9 +131,11 @@ Puzzle::~Puzzle()
 
 void Puzzle::destroyPuzzle()
 {
+    for (SDL_Rect* i:t_pos) delete i;
     t_pos.clear();
+    for (SDL_Rect* i:t_struct) delete i;
     t_struct.clear();
-    SDL_DestroyTexture(texture);
+    texture = NULL;
     for (int i=0; i<PUZZLE_SIZE; i++) 
         delete []matrix[i];
     delete []matrix;

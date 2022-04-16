@@ -15,6 +15,7 @@ class PuzzleBar
 {
 private:
     std::vector<Object*> puzzlelist;
+    Object *UpButton, *DownButton;
     SDL_Rect *border;
     int top,current;
 public:

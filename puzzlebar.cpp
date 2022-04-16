@@ -8,6 +8,8 @@ PuzzleBar::PuzzleBar()
 void PuzzleBar::memAllocate()
 {
     border = new SDL_Rect;
+    UpButton = new Object;
+    DownButton = new Object;
 }
 void PuzzleBar::loadObject(SDL_Renderer *render_target)
 {
@@ -15,21 +17,18 @@ void PuzzleBar::loadObject(SDL_Renderer *render_target)
     for (char c = '1'; c<='5'; c++)
     {
         filename[10] = c;
-        SDL_Texture *texture;
-        texture = IMG_LoadTexture(render_target, filename.c_str());
         Object *object = new Object;
-        object->setTexture(texture);
+        object->loadTexture(render_target, filename);
         puzzlelist.push_back(object);
     }
-
     top = 0;
     current = 0;
 }
 void PuzzleBar::defaultBar()
 {
-    
     setRect(border,BAR_ORIGIN_X, BAR_ORIGIN_Y, BAR_WIDTH, BAR_HEIGHT);
 }
+
 void PuzzleBar::Blit(SDL_Renderer *render_target)
 {
     
@@ -62,7 +61,6 @@ bool PuzzleBar::MouseProcess(const int x, const int y, const bool clicked)
                 current = i + top;
                 return 1;
             }
-            
         }
     return 0;
 }
@@ -72,3 +70,9 @@ SDL_Texture *PuzzleBar::GetNewTexture()
     return puzzlelist[current]->getTexture();
 }
 
+PuzzleBar::~PuzzleBar()
+{
+    delete border;
+    for (Object* v:puzzlelist) delete v;
+    puzzlelist.clear();
+}

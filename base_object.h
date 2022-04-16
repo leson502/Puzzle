@@ -15,7 +15,7 @@ public:
     void null_object();
     void setPos(int x,int y);
     void setSize(int w,int h);
-    void setTexture(SDL_Texture *p_texture);
+    void loadTexture(SDL_Renderer *render_target, std::string &filename);
     SDL_Texture *getTexture();
     SDL_Rect *getRect();
     void blit(SDL_Renderer *render_target);

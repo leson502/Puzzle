@@ -45,3 +45,8 @@ void setRect(SDL_Rect* rect,const int x, const int y, const int w, const int h)
     rect->w = w;
     rect->h = h;
 }
+
+int abs(int A)
+{
+    return (A>0) ? A : -A;
+}
