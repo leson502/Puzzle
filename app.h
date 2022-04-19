@@ -6,6 +6,7 @@
 #include "puzzle.h"
 #include "event.h"
 #include "puzzlebar.h"
+#include "object_text.h"
 
 class App
 {

@@ -14,16 +14,16 @@ void Clock::ResetClock()
 
 int Clock::GetSecond()
 {
-    return count/TIME;
+    return (count/MS_PER_SECOND)/SECOND_PER_MINUTE;
 }
 
 int Clock::GetMinutes()
 {
-    return count%TIME;
+    return (count/MS_PER_SECOND)%SECOND_PER_MINUTE;
 }
 
 void Clock::UpdateTick()
 {
     int currentTick = SDL_GetTicks();
-    count += (currentTick-lastTick)/1000;
+    count += (currentTick-lastTick);
 }

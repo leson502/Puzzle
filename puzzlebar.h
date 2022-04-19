@@ -10,6 +10,10 @@ const unsigned int BAR_HEIGHT = 600;
 const unsigned int BAR_WIDTH = 200;
 const unsigned int OBJECT_NUM = 5;
 const unsigned int DISPLAY_OBJECT_NUM = 3;
+const unsigned int UPBUTTON_X = 115;
+const unsigned int UPBUTTON_Y = 0;
+const unsigned int BUTTON_W = 80;
+const unsigned int BUTTON_H = 60;
 
 class PuzzleBar
 {
@@ -18,16 +22,18 @@ private:
     Object *UpButton, *DownButton;
     SDL_Rect *border;
     int top,current;
+    SDL_Renderer *renderer;
 public:
     PuzzleBar();
     void defaultBar();
     void memAllocate();
-    void loadObject(SDL_Renderer *render_target);
+    void loadObject();
     void setObjectPos();
-    void Blit(SDL_Renderer *render_target);
+    void Blit();
     void move(int x);
     bool MouseProcess(const int x, const int y, const bool clicked);
     SDL_Texture *GetNewTexture();
+    void setRender_target(SDL_Renderer *render_target);
     ~PuzzleBar();
 };
 

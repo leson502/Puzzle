@@ -25,6 +25,7 @@ void Puzzle::memoryAllocate()
     border = new SDL_Rect;
     p_struct = new SDL_Rect;
 }
+
 void Puzzle::defaultPuzzle()
 {
     
@@ -37,8 +38,6 @@ void Puzzle::defaultPuzzle()
 
 
     setRect(border,PUZZLE_ORIGIN_X, PUZZLE_ORIGIN_Y, PUZZLEZONE, PUZZLEZONE);
-    setRect(p_struct, 0, 0, PUZZLEZONE, PUZZLEZONE);
-    
 }
 
 void Puzzle::move(int i,int j)
@@ -60,23 +59,23 @@ void Puzzle::setTexture(SDL_Texture* _texture)
     splitPicture();
 }
 
-void Puzzle::blitPuzzle(SDL_Renderer *render_target, bool blitFlags)
+void Puzzle::blitPuzzle(bool blitFlags)
 {
     // render image background
     SDL_SetTextureColorMod(texture, 48,48,48); // darker color
-    SDL_RenderCopy(render_target, texture, p_struct, border);
-
+    SDL_RenderCopy(renderer, texture, p_struct, border);
+    
     // render tiles
     SDL_SetTextureColorMod(texture, 255,255,255); // full color
-    SDL_SetRenderDrawColor(render_target, 0, 0 ,0 ,255);
+    SDL_SetRenderDrawColor(renderer, 0, 0 ,0 ,255);
     for (int i=blitFlags; i<TILES_NUM; i++)
     {
-        SDL_RenderCopy(render_target, texture, t_struct[i], t_pos[i]);
-        SDL_RenderDrawRect(render_target, t_pos[i]);
+        SDL_RenderCopy(renderer, texture, t_struct[i], t_pos[i]);
+        SDL_RenderDrawRect(renderer, t_pos[i]);
     }
 
     // border
-    SDL_RenderDrawRect(render_target, border);
+    SDL_RenderDrawRect(renderer, border);
 }
 
 void Puzzle::updateTilesPos()
@@ -99,7 +98,6 @@ void Puzzle::updateTilesPos()
                             vecY/=div;
                             break;
                         }
-                        
                 //SDL_Log("%d %d",vecX,vecY);
                 t_pos[matrix[i][j]]->x += vecX;
                 t_pos[matrix[i][j]]->y += vecY;
@@ -110,8 +108,11 @@ void Puzzle::splitPicture()
 {
     int t_height,t_width;
     SDL_QueryTexture(texture, NULL, NULL, &t_width,&t_height);
+    setRect(p_struct, 0, 0, t_width, t_height);
+    
     t_height/=PUZZLE_SIZE;
     t_width/=PUZZLE_SIZE;
+    
     for (int i=0; i<PUZZLE_SIZE; i++)
         for (int j=0; j<PUZZLE_SIZE; j++)   
         {
@@ -143,8 +144,8 @@ void Puzzle::destroyPuzzle()
 
 bool Puzzle::MouseProcess(const int x,const int y,const bool clicked)
 {
-    if (x>=PUZZLE_ORIGIN_X && x<=PUZZLE_ORIGIN_X+PUZZLEZONE &&
-        y>=PUZZLE_ORIGIN_Y && y<=PUZZLE_ORIGIN_Y+PUZZLEZONE )
+    if (hitBoxCheck(x, y, PUZZLE_ORIGIN_X, PUZZLE_ORIGIN_Y
+                    , PUZZLEZONE, PUZZLEZONE))
             {
                 int j = (x-PUZZLE_ORIGIN_X)*PUZZLE_SIZE/PUZZLEZONE;
                 int i = (y-PUZZLE_ORIGIN_Y)*PUZZLE_SIZE/PUZZLEZONE;
@@ -192,8 +193,13 @@ void Puzzle::Suffer()
         if (x <=1 && y == 0)
             swap(&matrix[PUZZLE_SIZE-1][PUZZLE_SIZE-1], &matrix[PUZZLE_SIZE-2][PUZZLE_SIZE-1]);
         else 
-            swap(&matrix[0][0],&matrix[0][1]);
+            swap(&matrix[0][0],&matrix[1][0]);
     } 
     
     updateTilesPos();
+}
+
+void Puzzle::setRender_target(SDL_Renderer *render_target)
+{
+    renderer = render_target;
 }

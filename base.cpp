@@ -46,7 +46,20 @@ void setRect(SDL_Rect* rect,const int x, const int y, const int w, const int h)
     rect->h = h;
 }
 
+void setColor(SDL_Color *color, const int r, const int g, const int b, const int a)
+{
+    color->a = a;
+    color->b = b;
+    color->g = g;
+    color->r = r;
+}
 int abs(int A)
 {
     return (A>0) ? A : -A;
+}
+
+bool hitBoxCheck(int x,int y,int X,int Y,int W,int H)
+{
+    return (X <= x && Y <= y &&
+            (X + W) >= x && (Y+H) >=y);
 }

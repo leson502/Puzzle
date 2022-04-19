@@ -19,6 +19,10 @@ SDL_Renderer* Graphic:: getRenderer()
 {
     return renderer;
 }
+TTF_Font* Graphic::getFont()
+{
+    return mainFont;
+}
 void Graphic:: InitSDL(unsigned int windowFlags,
             unsigned int rendererFlags, std::string &fontfilename)
 {
@@ -30,7 +34,7 @@ void Graphic:: InitSDL(unsigned int windowFlags,
     if (window == NULL)
         logSDLerror(std::cout, "SDL create window", 1); 
     
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear"); 
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2"); 
 
     renderer = SDL_CreateRenderer(window, -1, rendererFlags);
     if (renderer == NULL)
@@ -40,6 +44,7 @@ void Graphic:: InitSDL(unsigned int windowFlags,
 
     if (TTF_Init() < 0) 
         SDL_Log("%s", TTF_GetError());
+
     mainFont = TTF_OpenFont(fontfilename.c_str(), FONT_SIZE);
 }
 
@@ -49,7 +54,6 @@ void Graphic:: QuitSDL()
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
-
 
 SDL_Texture *Graphic::loadTexture(const std::string& filename)
     {

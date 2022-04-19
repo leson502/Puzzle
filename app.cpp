@@ -24,12 +24,15 @@ void App::setGraphic()
 void App::setPuzzle()
 {
     puzzle = new Puzzle();
+    puzzle->setRender_target(graphic->getRenderer());
+
     leftbar = new PuzzleBar();
+    leftbar->setRender_target(graphic->getRenderer());
 }
 
 void App::loadPuzzleTexture()
 {
-    leftbar->loadObject(graphic->getRenderer());
+    leftbar->loadObject();
     puzzle->setTexture(leftbar->GetNewTexture());
 }
 
@@ -37,9 +40,10 @@ void App::loadBackground()
 {
     std::string filename = "gfx/background.png";
     background = new Object;
+    background->setRender_target(graphic->getRenderer());
     background->setPos(0,0);
     background->setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-    background->loadTexture(graphic->getRenderer(), filename);
+    background->loadTexture(filename);
 }
 
 void App::loadAllTexture()
@@ -52,9 +56,9 @@ void App::updateRender()
 {
     SDL_RenderClear(graphic->getRenderer());    
 
-    background->blit(graphic->getRenderer());
-    leftbar->Blit(graphic->getRenderer());
-    puzzle->blitPuzzle(graphic->getRenderer(), 1);
+    background->blit();
+    leftbar->Blit();
+    puzzle->blitPuzzle(1);
 
     graphic->renderPresent();
 }

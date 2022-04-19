@@ -20,14 +20,15 @@ private:
    std::vector<SDL_Rect*> t_pos,t_struct;
    SDL_Texture *texture;
    SDL_Rect *border, *p_struct;
-   
+   SDL_Renderer *renderer;
 public:
     Puzzle();
     ~Puzzle();
     void memoryAllocate();
     void defaultPuzzle();
     void setTexture(SDL_Texture *_texture);
-    void blitPuzzle(SDL_Renderer *render_target,  bool blitFlags);
+    void blitPuzzle(bool blitFlags);
+    void setRender_target(SDL_Renderer *render_target);
     void updateTilesPos();
     void splitPicture();
     void destroyPuzzle();

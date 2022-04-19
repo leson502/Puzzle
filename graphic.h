@@ -15,6 +15,7 @@ public:
     void DefaultGraphic();
     SDL_Window *getWindow();
     SDL_Renderer *getRenderer();
+    TTF_Font *getFont();
     void InitSDL(unsigned int windowFlags,
             unsigned int rendererFlags, std::string &fontfilename);
     void QuitSDL();

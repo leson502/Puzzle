@@ -2,17 +2,25 @@
 
 Object::Object()
 {
-    null_object();
+    default_object();
 }
 
 Object::~Object()
 {
-    null_object();
+    destroy_object();
 }
-void Object::null_object()
+void Object::default_object()
 {
-    texture = nullptr;
+    renderer = NULL;
+    texture = NULL;
     rect = new SDL_Rect;
+}
+
+void Object::destroy_object()
+{
+    renderer = NULL;
+    SDL_DestroyTexture(texture);
+    delete rect;
 }
 void Object::setPos(int x,int y)
 {
@@ -27,9 +35,9 @@ void Object::setSize(int w,int h)
 }
 
 
-void Object::blit(SDL_Renderer *render_target)
+void Object::blit()
 {
-    SDL_RenderCopy(render_target, texture, NULL, rect);
+    SDL_RenderCopy(renderer, texture, NULL, rect);
 }
 
 SDL_Texture *Object::getTexture()
@@ -37,8 +45,12 @@ SDL_Texture *Object::getTexture()
     return texture;
 }
 
-void Object::loadTexture(SDL_Renderer *render_target, std::string &filename)
+void Object::loadTexture(std::string &filename)
 {
-    texture = IMG_LoadTexture(render_target, filename.c_str());
-    //SDL_Log("Loading %s",filename.c_str());
+    texture = IMG_LoadTexture(renderer, filename.c_str());
+}
+
+void Object::setRender_target(SDL_Renderer *render_target)
+{
+    renderer = render_target;
 }
