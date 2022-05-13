@@ -14,14 +14,14 @@ private:
     Graphic *graphic;
     Puzzle *puzzle;
     Event *event;
-    Object *background;
+    Object *background,*suffer;
     PuzzleBar *leftbar;
 public:
     App();
     ~App();
     void loadAllTexture();
-    void loadBackground();
-    void defaultApp();
+    void loadObject();
+    void Init();
     void setGraphic();
     void setPuzzle();
     void loadPuzzleTexture();

@@ -11,7 +11,7 @@ protected:
 public:
     Text_object();
     ~Text_object();
-    void default_object();
+    void Init();
     void destroy_object();
     void setFont(TTF_Font *_font);
     void createTexture(std::string &text);

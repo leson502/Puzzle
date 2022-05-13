@@ -12,6 +12,8 @@ const unsigned int OBJECT_NUM = 5;
 const unsigned int DISPLAY_OBJECT_NUM = 3;
 const unsigned int UPBUTTON_X = 115;
 const unsigned int UPBUTTON_Y = 0;
+const unsigned int DOWNBUTTON_X = 115;
+const unsigned int DOWNBUTTON_Y = 660;
 const unsigned int BUTTON_W = 80;
 const unsigned int BUTTON_H = 60;
 
@@ -19,13 +21,13 @@ class PuzzleBar
 {
 private:
     std::vector<Object*> puzzlelist;
-    Object *UpButton, *DownButton;
+    Object *UpButton, *DownButton,*background;
     SDL_Rect *border;
     int top,current;
     SDL_Renderer *renderer;
 public:
     PuzzleBar();
-    void defaultBar();
+    void Init();
     void memAllocate();
     void loadObject();
     void setObjectPos();

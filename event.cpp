@@ -2,9 +2,9 @@
 
 Event::Event()
 {
-    defaultEvent();
+    Init();
 }
-void Event::defaultEvent()
+void Event::Init()
 {
     SDL_GetMouseState(&mouse_x,&mouse_y);
     App_quit = 0;

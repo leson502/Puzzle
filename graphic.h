@@ -17,7 +17,7 @@ public:
     SDL_Renderer *getRenderer();
     TTF_Font *getFont();
     void InitSDL(unsigned int windowFlags,
-            unsigned int rendererFlags, std::string &fontfilename);
+            unsigned int rendererFlags, std::string fontfilename);
     void QuitSDL();
     SDL_Texture *loadTexture(const std::string& filename);
     void DrawTexture(SDL_Texture *texture, int x, int y);

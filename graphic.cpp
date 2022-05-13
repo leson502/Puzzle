@@ -24,7 +24,7 @@ TTF_Font* Graphic::getFont()
     return mainFont;
 }
 void Graphic:: InitSDL(unsigned int windowFlags,
-            unsigned int rendererFlags, std::string &fontfilename)
+            unsigned int rendererFlags, std::string fontfilename)
 {
    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
         logSDLerror(std::cout, "SDL Init",1);
@@ -34,7 +34,7 @@ void Graphic:: InitSDL(unsigned int windowFlags,
     if (window == NULL)
         logSDLerror(std::cout, "SDL create window", 1); 
     
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2"); 
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); 
 
     renderer = SDL_CreateRenderer(window, -1, rendererFlags);
     if (renderer == NULL)

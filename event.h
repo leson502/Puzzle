@@ -12,7 +12,7 @@ private:
 public:
     Event();
     void updateEvent();
-    void defaultEvent();
+    void Init();
     void doMouseButtonDown(SDL_MouseButtonEvent *event);
     int MousePosX();
     int MousePosY();

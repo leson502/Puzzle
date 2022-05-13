@@ -2,14 +2,15 @@
 
 Object::Object()
 {
-    default_object();
+    Init();
 }
 
 Object::~Object()
 {
     destroy_object();
 }
-void Object::default_object()
+
+void Object::Init()
 {
     renderer = NULL;
     texture = NULL;
@@ -53,4 +54,14 @@ void Object::loadTexture(std::string &filename)
 void Object::setRender_target(SDL_Renderer *render_target)
 {
     renderer = render_target;
+}
+
+void Object::SetColorMod(int r,int g,int b)
+{
+    SDL_SetTextureColorMod(texture, r, g, b);
+}
+
+void Object::SetAlphaMod(int a)
+{
+    SDL_SetTextureAlphaMod(texture, a);
 }

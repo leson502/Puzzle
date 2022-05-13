@@ -2,10 +2,10 @@
 
 App::App()
 {
-    defaultApp();
+    Init();
 }
 
-void App::defaultApp()
+void App::Init()
 {
     setGraphic();
     setPuzzle();
@@ -16,9 +16,8 @@ void App::defaultApp()
 void App::setGraphic()
 {
     graphic = new Graphic;
-    std::string fontfilename = "font/Roboto-Light.ttf";
     graphic->InitSDL(SDL_WINDOW_SHOWN,SDL_RENDERER_ACCELERATED | 
-                                SDL_RENDERER_PRESENTVSYNC, fontfilename);
+                                SDL_RENDERER_PRESENTVSYNC, "font/Roboto-Light.ttf");
 }
 
 void App::setPuzzle()
@@ -28,6 +27,9 @@ void App::setPuzzle()
 
     leftbar = new PuzzleBar();
     leftbar->setRender_target(graphic->getRenderer());
+
+    suffer = new Object();
+    suffer->setRender_target(graphic->getRenderer());
 }
 
 void App::loadPuzzleTexture()
@@ -36,20 +38,26 @@ void App::loadPuzzleTexture()
     puzzle->setTexture(leftbar->GetNewTexture());
 }
 
-void App::loadBackground()
+void App::loadObject()
 {
-    std::string filename = "gfx/background.png";
+    std::string filename = "gfx/background.jpg";
     background = new Object;
     background->setRender_target(graphic->getRenderer());
     background->setPos(0,0);
     background->setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     background->loadTexture(filename);
+    background->SetColorMod(192,192,192);
+
+    filename = "gfx/suffer.png";
+    suffer->loadTexture(filename);
+    suffer->setPos(1125-100,480);
+    suffer->setSize(200,50);
 }
 
 void App::loadAllTexture()
 {
     loadPuzzleTexture();
-    loadBackground();
+    loadObject();
 }
 
 void App::updateRender()
@@ -59,6 +67,7 @@ void App::updateRender()
     background->blit();
     leftbar->Blit();
     puzzle->blitPuzzle(1);
+    suffer->blit();
 
     graphic->renderPresent();
 }
@@ -70,7 +79,11 @@ void App::updatePuzzle()
     puzzle->MouseProcess(event->MousePosX(),event->MousePosY(),event->isLbuttonDown());
     if ( leftbar->MouseProcess(event->MousePosX(),event->MousePosY(),event->isLbuttonDown()) )
         puzzle->setTexture(leftbar->GetNewTexture());
+        
     puzzle->updateTilesPos();
+    if (hitBoxCheck(event->MousePosX(), event->MousePosY(), 
+                    1125-100, 480, 200, 50) && event->isLbuttonDown()) puzzle->Suffer();
+    
 }
 
 void App::appLoop()
@@ -97,6 +110,7 @@ void App::Play()
     puzzle->Suffer();
     appLoop();
 }
+
 App::~App()
 {
     AppQuit();

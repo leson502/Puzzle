@@ -3,10 +3,10 @@
 
 Text_object::Text_object()
 {
-    default_object();
+    Init();
 }
 
-void Text_object::default_object()
+void Text_object::Init()
 {
     renderer = NULL;
     texture = NULL;

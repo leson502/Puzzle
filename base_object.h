@@ -13,13 +13,15 @@ protected:
 public:
     Object();
     ~Object();
-    void default_object();
+    void Init();
     void setPos(int x,int y);
     void setSize(int w,int h);
     void loadTexture(std::string &filename);
     void setRender_target(SDL_Renderer *render_target);
     SDL_Texture *getTexture();
     SDL_Rect *getRect();
+    void SetColorMod(int r,int g,int b);
+    void SetAlphaMod(int a);
     void blit();
     void destroy_object();
 };
