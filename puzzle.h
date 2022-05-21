@@ -3,39 +3,38 @@
 
 
 #include "base.h"
-#include "base_object.h"
+#include "puzzle_board.h"
+#include "puzzle_tile.h"
+#include "display_fullsize_object.h"
 
-const int GRID_WIDTH = 3;
-const int TILES_NUM = GRID_WIDTH*GRID_WIDTH;
-
-// down, left, right, up
-const int row[] = { 1, 0, -1, 0 };
-const int col[] = { 0, -1, 0, 1 };
+const int DEFAULT_GRID_WIDTH = 3;
 
 class Puzzle
 {
 private:
-    int **matrix;
-    int x,y;
-    std::vector<SDL_Rect*> t_pos,t_struct;
+    Puzzle_board *board;
+    std::vector<Puzzle_tile*>  tiles;
+    Display_fullsize_object *fullpuzzle;
     SDL_Texture *texture;
-    SDL_Rect *border, *p_struct;
     SDL_Renderer *renderer;
 public:
     Puzzle();
+    Puzzle(int grid_width);
+    Puzzle(int grid_width, SDL_Renderer *render_target);
+    Puzzle(int grid_width, SDL_Renderer *render_target, SDL_Texture *texture);
+    Puzzle(SDL_Renderer *render_target);
+    Puzzle(SDL_Renderer *render_target, SDL_Texture *texture);
     ~Puzzle();
-    void memoryAllocate();
-    void Init();
+    void InitGlobal();
+    void InitObject(int grid_width);
     void setTexture(SDL_Texture *_texture);
-    void blitPuzzle(bool blitFlags);
+    void blit(bool blitFlags);
     void setRender_target(SDL_Renderer *render_target);
     void updateTilesPos();
     void splitPicture();
-    void destroyPuzzle();
-    int Getinversion();
-    void Suffer();
+    void destroy();
+    void suffer();
     bool MouseProcess(const int x,const int y,const bool clicked);
-    bool move(int i,int j);
 };
 
 #endif

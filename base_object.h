@@ -3,27 +3,18 @@
 
 #include "base.h"
 
-class Object
-
+class Base_object
 {
 protected:
     SDL_Texture *texture;
-    SDL_Rect *rect;
     SDL_Renderer *renderer;
 public:
-    Object();
-    ~Object();
+    Base_object();
+    Base_object(SDL_Renderer *render_target);
+    ~Base_object();
     void Init();
-    void setPos(int x,int y);
-    void setSize(int w,int h);
-    void loadTexture(std::string &filename);
     void setRender_target(SDL_Renderer *render_target);
-    SDL_Texture *getTexture();
-    SDL_Rect *getRect();
-    void SetColorMod(int r,int g,int b);
-    void SetAlphaMod(int a);
-    void blit();
-    void destroy_object();
+    void Destroy();
 };
 
 #endif

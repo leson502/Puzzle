@@ -1,67 +1,36 @@
 #include "base_object.h"
 
-Object::Object()
+Base_object::Base_object()
 {
     Init();
 }
 
-Object::~Object()
+Base_object::Base_object(SDL_Renderer *render_target)
 {
-    destroy_object();
+    Init();
+    setRender_target(render_target);
 }
 
-void Object::Init()
+Base_object::~Base_object()
+{
+    Destroy();
+}
+
+void Base_object::Init()
 {
     renderer = NULL;
     texture = NULL;
-    rect = new SDL_Rect;
 }
 
-void Object::destroy_object()
+void Base_object::Destroy()
 {
     renderer = NULL;
     SDL_DestroyTexture(texture);
-    delete rect;
-}
-void Object::setPos(int x,int y)
-{
-    rect->x = x;
-    rect->y = y;
-}
-
-void Object::setSize(int w,int h)
-{
-    rect->w = w;
-    rect->h = h;
 }
 
 
-void Object::blit()
-{
-    SDL_RenderCopy(renderer, texture, NULL, rect);
-}
-
-SDL_Texture *Object::getTexture()
-{
-    return texture;
-}
-
-void Object::loadTexture(std::string &filename)
-{
-    texture = IMG_LoadTexture(renderer, filename.c_str());
-}
-
-void Object::setRender_target(SDL_Renderer *render_target)
+void Base_object::setRender_target(SDL_Renderer *render_target)
 {
     renderer = render_target;
 }
 
-void Object::SetColorMod(int r,int g,int b)
-{
-    SDL_SetTextureColorMod(texture, r, g, b);
-}
-
-void Object::SetAlphaMod(int a)
-{
-    SDL_SetTextureAlphaMod(texture, a);
-}

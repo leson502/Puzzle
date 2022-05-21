@@ -2,104 +2,101 @@
 
 Puzzle::Puzzle()
 {
-    memoryAllocate();
-    Init();
+    InitGlobal();
+    InitObject(DEFAULT_GRID_WIDTH);
 }
 
-void Puzzle::memoryAllocate()
+Puzzle::Puzzle(int grid_width)
 {
-    matrix = new int*[GRID_WIDTH];
-    for (int i=0; i<GRID_WIDTH; i++)
-        matrix[i] = new int[GRID_WIDTH];
-
-    texture = nullptr;
-
-    for (int i=0; i<TILES_NUM; i++)
-    {
-        SDL_Rect *rect1 = new SDL_Rect;
-        t_pos.push_back(rect1);
-        SDL_Rect *rect2 = new SDL_Rect;
-        t_struct.push_back(rect2);
-    }
-
-    border = new SDL_Rect;
-    p_struct = new SDL_Rect;
+    InitGlobal();
+    InitObject(grid_width);
 }
 
-void Puzzle::Init()
+Puzzle::Puzzle(int grid_width, SDL_Renderer *render_target)
+: Puzzle(grid_width)
 {
-    for (int i=0; i<GRID_WIDTH; i++)
-        for (int j=0; j<GRID_WIDTH; j++) 
-            matrix[i][j]= (i*GRID_WIDTH+j+1)%TILES_NUM;
-
-    x = GRID_WIDTH-1;
-    y = GRID_WIDTH-1;
-
-
-    setRect(border,PUZZLE_ORIGIN_X, PUZZLE_ORIGIN_Y, PUZZLEZONE, PUZZLEZONE);
+    setRender_target(render_target);
 }
 
-bool Puzzle::move(int i,int j)
+Puzzle::Puzzle(int grid_width, SDL_Renderer *render_target, SDL_Texture *t_texture)
+: Puzzle(grid_width, render_target)
 {
-    for (int l=0; l<4; l++) 
-        if (i+col[l] == x && j+row[l] == y)
-        {
-            std::swap(matrix[x][y],matrix[i][j]);
-            x=i;
-            y=j;
-            return 1;
-        }
-    return 0;
+    setTexture(t_texture);
 }
 
-void Puzzle::setTexture(SDL_Texture* _texture)
+Puzzle::Puzzle(SDL_Renderer *render_target)
+: Puzzle()
 {
-    texture = _texture;
+    setRender_target(render_target);
+}
+
+Puzzle::Puzzle(SDL_Renderer *render_target, SDL_Texture *t_texture)
+: Puzzle (render_target)
+{
+    setTexture(t_texture);
+}
+
+void Puzzle::InitGlobal()
+{
+    renderer = NULL;
+    texture = NULL;
+}
+
+void Puzzle::InitObject(int grid_width)
+{
+    board = new Puzzle_board(grid_width);
+    tiles = std::vector <Puzzle_tile*> (grid_width*grid_width, NULL);
+
+    for (int i=0; i<grid_width*grid_width; i++) 
+        tiles[i] = new Puzzle_tile;
+
+    fullpuzzle = new Display_fullsize_object(PUZZLE_ORIGIN_X,PUZZLE_ORIGIN_Y
+                                                , PUZZLEZONE, PUZZLEZONE);
+}
+
+void Puzzle::setTexture(SDL_Texture* t_texture)
+{
+    texture = t_texture;
+    fullpuzzle->loadTexture(texture);
+    for (int i=0; i<board->tiles_num(); i++) tiles[i]->loadTexture(texture);
     splitPicture();
 }
 
-void Puzzle::blitPuzzle(bool blitFlags)
+void Puzzle::setRender_target(SDL_Renderer *render_target)
 {
-    // render image background
-    SDL_SetTextureColorMod(texture, 48,48,48); // darker color
-    SDL_RenderCopy(renderer, texture, p_struct, border);
-    
-    // render tiles
-    SDL_SetTextureColorMod(texture, 255,255,255); // full color
-    SDL_SetRenderDrawColor(renderer, 0, 0 ,0 ,255);
-    for (int i=blitFlags; i<TILES_NUM; i++)
-    {
-        SDL_RenderCopy(renderer, texture, t_struct[i], t_pos[i]);
-        SDL_RenderDrawRect(renderer, t_pos[i]);
-    }
+    renderer = render_target;
+    fullpuzzle->setRender_target(renderer);
+    for (int i=0; i<board->tiles_num(); i++) tiles[i]->setRender_target(renderer);
+}
 
-    // border
-    SDL_RenderDrawRect(renderer, border);
+void Puzzle::blit(bool blitFlags)
+{
+    if (blitFlags)
+    {
+        fullpuzzle->blit(48,48,48);
+    
+        SDL_SetRenderDrawColor(renderer, 0, 0 ,0 ,255);
+        for (int i=1; i<board->tiles_num(); i++)
+        {
+            tiles[i]->blit();
+            tiles[i]->drawBorder();
+        }
+    }
+    else fullpuzzle->blit();
+
+    fullpuzzle->drawBorder();
+    
 }
 
 void Puzzle::updateTilesPos()
 {
-    for (int i=0; i<GRID_WIDTH; i++)
-        for (int j=0; j<GRID_WIDTH; j++)
+    for (int i=0; i<board->getGrid_width(); i++)
+        for (int j=0; j<board->getGrid_width(); j++)
             {
-                int vecX = (j*(PUZZLEZONE/GRID_WIDTH) + PUZZLE_ORIGIN_X)-t_pos[matrix[i][j]]->x;
-                int vecY = (i*(PUZZLEZONE/GRID_WIDTH) + PUZZLE_ORIGIN_Y)-t_pos[matrix[i][j]]->y;
+                int posX = (j*(PUZZLEZONE/board->getGrid_width()) + PUZZLE_ORIGIN_X);
+                int posY = (i*(PUZZLEZONE/board->getGrid_width()) + PUZZLE_ORIGIN_Y);
+                tiles[board->getIndex(i,j)]->moveTo(posX,posY);
                 
-                for (int div=3; div>1; div/=2)
-                        if (abs(vecX)>=div) 
-                        {
-                            vecX/=div;
-                            break;
-                        }
-                for (int div=3; div>1; div/=2)
-                        if (abs(vecY)>=div) 
-                        {
-                            vecY/=div;
-                            break;
-                        }
-                
-                t_pos[matrix[i][j]]->x += vecX;
-                t_pos[matrix[i][j]]->y += vecY;
             }
 }
 
@@ -107,38 +104,36 @@ void Puzzle::splitPicture()
 {
     int t_height,t_width;
     SDL_QueryTexture(texture, NULL, NULL, &t_width,&t_height);
-    setRect(p_struct, 0, 0, t_width, t_height);
     
-    t_height/=GRID_WIDTH;
-    t_width/=GRID_WIDTH;
-    
-    for (int i=0; i<GRID_WIDTH; i++)
-        for (int j=0; j<GRID_WIDTH; j++)   
+    t_height/=board->getGrid_width();
+    t_width/=board->getGrid_width();
+    for (int i=0; i<board->getGrid_width(); i++)
+        for (int j=0; j<board->getGrid_width(); j++)   
         {
-            int index = (i*GRID_WIDTH+j+1)%TILES_NUM;
-            setRect(t_struct[index],j * t_width,
-                    i * t_height, t_width, t_height);
-            setRect(t_pos[index], PUZZLE_ORIGIN_X
-                    , PUZZLE_ORIGIN_Y, PUZZLEZONE/GRID_WIDTH,
-                    PUZZLEZONE/GRID_WIDTH );
+            int index = (i*board->getGrid_width()+j+1)%board->tiles_num();
+
+            tiles[index]->setSource_Structure_Position(j * t_width,i * t_height);
+            tiles[index]->setSource_Structure_Size(t_width,t_height);
+
+            tiles[index]->setDestination_Structure_Position(PUZZLE_ORIGIN_X,PUZZLE_ORIGIN_Y);
+            tiles[index]->setDestination_Structure_Size(PUZZLEZONE/board->getGrid_width(), PUZZLEZONE/board->getGrid_width());
         }      
 }
 
 Puzzle::~Puzzle()
 {
-    destroyPuzzle();
+    destroy();
 }
 
-void Puzzle::destroyPuzzle()
+void Puzzle::destroy()
 {
-    for (SDL_Rect* i:t_pos) delete i;
-    t_pos.clear();
-    for (SDL_Rect* i:t_struct) delete i;
-    t_struct.clear();
+    delete board;
+    delete fullpuzzle;
+    renderer = NULL;
     texture = NULL;
-    for (int i=0; i<GRID_WIDTH; i++) 
-        delete []matrix[i];
-    delete []matrix;
+
+    for (auto x:tiles) delete x;
+    tiles.clear();
 }
 
 bool Puzzle::MouseProcess(const int x,const int y,const bool clicked)
@@ -146,59 +141,23 @@ bool Puzzle::MouseProcess(const int x,const int y,const bool clicked)
     if (hitBoxCheck(x, y, PUZZLE_ORIGIN_X, PUZZLE_ORIGIN_Y
                     , PUZZLEZONE, PUZZLEZONE))
             {
-                int j = (x-PUZZLE_ORIGIN_X)*GRID_WIDTH/PUZZLEZONE;
-                int i = (y-PUZZLE_ORIGIN_Y)*GRID_WIDTH/PUZZLEZONE;
+                int j = (x-PUZZLE_ORIGIN_X)*board->getGrid_width()/PUZZLEZONE;
+                int i = (y-PUZZLE_ORIGIN_Y)*board->getGrid_width()/PUZZLEZONE;
                 if (clicked)
                 {
-                    move(i,j);
+                    board->move(i,j);
                     return 1;
                 }
             }
     return 0;
 }
 
-int Puzzle::Getinversion()
+void Puzzle::suffer()
 {
-    int count=0;
-    for (int i=0; i<TILES_NUM-1; i++)
-        for (int j= i+1; j<TILES_NUM; j++)
-            {
-                int &w = matrix[i/GRID_WIDTH][i%GRID_WIDTH];
-                int &r = matrix[j/GRID_WIDTH][j%GRID_WIDTH];
-                if (w && r && w > r) count++;
-            }
-    return count;
-}
-
-void Puzzle::Suffer()
-{
-    // suffer by using random swaping
-     for (int i=0; i<GRID_WIDTH; i++)
-        for (int j=0; j<GRID_WIDTH; j++)
-            {
-                int k = rand() % GRID_WIDTH;
-                int l = rand() % GRID_WIDTH;
-                std::swap(matrix[i][j], matrix[k][l]);
-            } 
-
-    // update empty tiles
-    for (int i=0; i<GRID_WIDTH; i++)
-        for (int j=0; j<GRID_WIDTH; j++)
-            if (matrix[i][j] == 0) x=i,y=j;
-
-    // make puzzle can be solve
-    if (Getinversion() %2 !=0)
-    {
-        if (x <=1 && y == 0)
-            std::swap(matrix[GRID_WIDTH-1][GRID_WIDTH-1], matrix[GRID_WIDTH-2][GRID_WIDTH-1]);
-        else 
-            std::swap(matrix[0][0],matrix[1][0]);
-    } 
-    
+    board->suffer();
     updateTilesPos();
 }
 
-void Puzzle::setRender_target(SDL_Renderer *render_target)
-{
-    renderer = render_target;
-}
+
+
+

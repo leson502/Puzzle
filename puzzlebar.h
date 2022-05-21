@@ -2,7 +2,9 @@
 #define H_PUZZLE_BAR
 
 #include "base.h"
-#include "base_object.h"
+#include "bar_tile.h"
+#include "button.h"
+#include "display_fullsize_object.h"
 
 const unsigned int BAR_ORIGIN_X = 55;
 const unsigned int BAR_ORIGIN_Y = 60;
@@ -20,18 +22,18 @@ const unsigned int BUTTON_H = 60;
 class PuzzleBar
 {
 private:
-    std::vector<Object*> puzzlelist;
-    Object *UpButton, *DownButton,*background;
-    SDL_Rect *border;
     int top,current;
+    std::vector<Bar_tile*> tiles;
+    Button *UpButton, *DownButton;
+    Display_fullsize_object *background;
     SDL_Renderer *renderer;
 public:
     PuzzleBar();
+    PuzzleBar(SDL_Renderer *render_target);
     void Init();
-    void memAllocate();
-    void loadObject();
+    void loadTexture();
     void setObjectPos();
-    void Blit();
+    void blit();
     void move(int x);
     bool MouseProcess(const int x, const int y, const bool clicked);
     SDL_Texture *GetNewTexture();

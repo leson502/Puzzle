@@ -6,7 +6,7 @@
 #include "puzzle.h"
 #include "event.h"
 #include "puzzlebar.h"
-#include "object_text.h"
+
 
 class App
 {
@@ -14,15 +14,16 @@ private:
     Graphic *graphic;
     Puzzle *puzzle;
     Event *event;
-    Object *background,*suffer;
     PuzzleBar *leftbar;
+    Display_fullsize_object *background;
+    Button *Suffer;
 public:
     App();
     ~App();
     void loadAllTexture();
     void loadObject();
-    void Init();
-    void setGraphic();
+    void InitObject();
+    void InitGraphic();
     void setPuzzle();
     void loadPuzzleTexture();
     void updateRender();
