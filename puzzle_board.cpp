@@ -67,7 +67,7 @@ void Puzzle_board::suffer()
             if (matrix[i][j] == 0) empty_x=i,empty_y=j;
 
     // make puzzle can be solve
-    if (getInversion() %2 !=0)
+    if (!isSolvable())
     {
         if (empty_x <=1 && empty_y == 0)
             std::swap(matrix[grid_width-1][grid_width-1], matrix[grid_width-2][grid_width-1]);
@@ -95,3 +95,28 @@ int Puzzle_board::getIndex(int i,int j)
 {
     return matrix[i][j];
 }
+
+bool Puzzle_board::isGoal()
+{
+    for (int i=0; i<grid_width; i++)
+        for (int j=0; j<grid_width; j++)
+           if (matrix[i][j] != ((i*grid_width+j+1) % (tiles_num()))) return false;
+    return true;
+}
+
+bool Puzzle_board::isSolvable()
+{
+    int inversion = getInversion();
+    if (grid_width % 2 == 1)
+        return (inversion % 2 == 0);
+    else 
+        return ((inversion + grid_width- empty_y -1) %2 == 0);
+    /*
+    1. If grid_width is odd, then puzzle instance is solvable if number of inversions is even.
+    2. If grid_witdh is even, puzzle instance is solvable if 
+        a. the blank is on an even row counting from the bottom (second-last, fourth-last, etc.) and number of inversions is odd.
+        b. the blank is on an odd row counting from the bottom (last, third-last, fifth-last, etc.) and number of inversions is even.
+    3. For all other cases, the puzzle instance is not solvable.
+    */
+}
+

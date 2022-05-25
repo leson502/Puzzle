@@ -48,7 +48,7 @@ void Puzzle::InitObject(int grid_width)
     tiles = std::vector <Puzzle_tile*> (grid_width*grid_width, NULL);
 
     for (int i=0; i<grid_width*grid_width; i++) 
-        tiles[i] = new Puzzle_tile;
+        tiles[i] = new Puzzle_tile(i);
 
     fullpuzzle = new Display_fullsize_object(PUZZLE_ORIGIN_X,PUZZLE_ORIGIN_Y
                                                 , PUZZLEZONE, PUZZLEZONE);
@@ -88,15 +88,18 @@ void Puzzle::blit(bool blitFlags)
     
 }
 
-void Puzzle::updateTilesPos()
+void Puzzle::updateTilesPos(bool SlideEffect)
 {
     for (int i=0; i<board->getGrid_width(); i++)
         for (int j=0; j<board->getGrid_width(); j++)
             {
                 int posX = (j*(PUZZLEZONE/board->getGrid_width()) + PUZZLE_ORIGIN_X);
                 int posY = (i*(PUZZLEZONE/board->getGrid_width()) + PUZZLE_ORIGIN_Y);
-                tiles[board->getIndex(i,j)]->moveTo(posX,posY);
-                
+
+                if (SlideEffect)
+                    tiles[board->getIndex(i,j)]->moveTo(posX,posY);
+                else
+                    tiles[board->getIndex(i,j)]->setDestination_Structure_Position(posX,posY);
             }
 }
 
@@ -115,7 +118,9 @@ void Puzzle::splitPicture()
             tiles[index]->setSource_Structure_Position(j * t_width,i * t_height);
             tiles[index]->setSource_Structure_Size(t_width,t_height);
 
-            tiles[index]->setDestination_Structure_Position(PUZZLE_ORIGIN_X,PUZZLE_ORIGIN_Y);
+            updateTilesPos(0);
+            
+
             tiles[index]->setDestination_Structure_Size(PUZZLEZONE/board->getGrid_width(), PUZZLEZONE/board->getGrid_width());
         }      
 }
@@ -145,8 +150,7 @@ bool Puzzle::MouseProcess(const int x,const int y,const bool clicked)
                 int i = (y-PUZZLE_ORIGIN_Y)*board->getGrid_width()/PUZZLEZONE;
                 if (clicked)
                 {
-                    board->move(i,j);
-                    return 1;
+                    return board->move(i,j);
                 }
             }
     return 0;
@@ -155,9 +159,38 @@ bool Puzzle::MouseProcess(const int x,const int y,const bool clicked)
 void Puzzle::suffer()
 {
     board->suffer();
-    updateTilesPos();
+    updateTilesPos(1);
 }
 
+void Puzzle::resize(int grid)
+{
+    board->resize(grid);
+    for (auto x:tiles) delete x;
+    
+    tiles = std::vector <Puzzle_tile*> (grid*grid, NULL);
 
+    for (int i=0; i<grid*grid; i++) 
+        tiles[i] = new Puzzle_tile(renderer, texture);
 
+    splitPicture();
+    suffer();
+}
+
+bool Puzzle::isGoal()
+{
+    if (!board->isGoal()) 
+        return false;
+    
+    for (int i=0; i<board->getGrid_width(); i++)
+        for (int j=0; j<board->getGrid_width(); j++)
+            {
+                int posX = (j*(PUZZLEZONE/board->getGrid_width()) + PUZZLE_ORIGIN_X);
+                int posY = (i*(PUZZLEZONE/board->getGrid_width()) + PUZZLE_ORIGIN_Y);
+
+                if (!tiles[board->getIndex(i,j)]->isMatchPosition(posX, posY)) 
+                    return false;
+            }
+    
+    return true;
+}
 

@@ -37,10 +37,27 @@ void Bar_tile::Init()
     renderer = NULL;
     texture = NULL;
     dstrect = new SDL_Rect;
+    BlitFlags = BAR_TILES_BLIT_NORMAL;
+    clicked = 0;
 }
 void Bar_tile::blit()
 {
-    SDL_RenderCopy(renderer, texture, NULL, dstrect);
+    switch (BlitFlags)
+    {
+    case BAR_TILES_BLIT_NORMAL:
+        SDL_RenderCopy(renderer, texture, NULL, dstrect);
+        break;
+    case BAR_TILES_BLIT_LARGE:
+        setDestination_Structure_Position(dstrect->x-10, dstrect->y-10);
+        setDestination_Structure_Size(dstrect->w+20, dstrect->h+20);
+        
+        SDL_RenderCopy(renderer, texture, NULL, dstrect);
+
+        setDestination_Structure_Position(dstrect->x+10, dstrect->y+10);
+        setDestination_Structure_Size(dstrect->w-20, dstrect->h-20);
+    default:
+        break;
+    }
 }
 bool Bar_tile::checkHitBox(int x, int y)
 {
@@ -51,6 +68,13 @@ SDL_Texture* Bar_tile::getTexture()
     return texture;
 }
 
+void Bar_tile::setBlitFlags(int Flags)
+{
+    
+    if (Flags != BAR_TILES_BLIT_NORMAL && 
+        Flags != BAR_TILES_BLIT_LARGE) return;
+    BlitFlags = Flags;
+}
 void Bar_tile::loadTexture(std::string filename)
 {
     texture = IMG_LoadTexture(renderer, filename.c_str());
@@ -61,4 +85,20 @@ void Bar_tile::destroy()
     renderer = NULL;
     SDL_DestroyTexture(texture);
     delete dstrect;
+}
+
+void Bar_tile::MouseProcess(const int x, const int y, const bool m_click)
+{
+    if (checkHitBox(x, y)) 
+        {
+            setBlitFlags(BAR_TILES_BLIT_LARGE);
+            clicked = m_click;
+        }
+    else
+        setBlitFlags(BAR_TILES_BLIT_NORMAL);
+}
+
+bool Bar_tile::isClicked()
+{
+    return clicked;
 }

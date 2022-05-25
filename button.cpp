@@ -38,6 +38,7 @@ void Button::Init()
     renderer = NULL;
     texture = NULL;
     dstrect = new SDL_Rect;
+    clicked = 0;
 }
 
 void Button::blit()
@@ -64,4 +65,20 @@ void Button::destroy()
     renderer = NULL;
     SDL_DestroyTexture(texture);
     delete dstrect;
+}
+
+void Button::MouseProcess(const int x, const int y, const bool m_click)
+{
+    if (checkHitBox(x,y)) 
+    {
+        SetAlphaMod(128);
+        clicked = m_click;
+    }   
+    else 
+        SetAlphaMod(255);
+}
+
+bool Button::isClicked()
+{
+    return clicked;
 }

@@ -18,6 +18,7 @@ public:
     int MousePosY();
     bool isLbuttonDown();
     bool isQuit();
+    void getMouseStatus(int &x, int &y, int &click);
 };
  
 #endif

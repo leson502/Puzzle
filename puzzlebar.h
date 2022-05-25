@@ -22,11 +22,13 @@ const unsigned int BUTTON_H = 60;
 class PuzzleBar
 {
 private:
-    int top,current;
+    int top;
     std::vector<Bar_tile*> tiles;
     Button *UpButton, *DownButton;
     Display_fullsize_object *background;
     SDL_Renderer *renderer;
+    SDL_Texture *current;
+    bool currentChanged;
 public:
     PuzzleBar();
     PuzzleBar(SDL_Renderer *render_target);
@@ -35,9 +37,12 @@ public:
     void setObjectPos();
     void blit();
     void move(int x);
+    void updateTilesPos();
     bool MouseProcess(const int x, const int y, const bool clicked);
+    bool isCurrentChanged();
     SDL_Texture *GetNewTexture();
     void setRender_target(SDL_Renderer *render_target);
+    void destroy();
     ~PuzzleBar();
 };
 

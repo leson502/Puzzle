@@ -1,3 +1,6 @@
+#ifndef H_PUZZLE_BOARD
+#define H_PUZZLE_BOARD
+
 #include "base.h"
 
 
@@ -19,6 +22,8 @@ public:
     int getInversion();
     int getIndex(int i, int j);
     int getGrid_width();
+    bool isGoal();
+    bool isSolvable();
     void suffer();
 };
-
+#endif

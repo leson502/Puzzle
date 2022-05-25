@@ -63,3 +63,10 @@ bool Event::isQuit()
 {
     return App_quit;
 }
+
+void Event::getMouseStatus(int &x, int &y, int &click)
+{
+    x = mouse_x;
+    y = mouse_y;
+    click = LbuttonDown;
+}

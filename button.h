@@ -9,6 +9,7 @@
 class Button : public Base_object, public Destination_structure
 {
 private:
+    bool clicked;
 public:
     Button();
     Button(SDL_Renderer *render_target);
@@ -21,6 +22,8 @@ public:
     void SetAlphaMod(const int a);
     bool checkHitBox(int x,int y);
     void loadTexture(std::string filename);
+    void MouseProcess(const int x,const int y,const bool m_click);
+    bool isClicked();
     SDL_Texture* getTexture();
     void destroy();
 };

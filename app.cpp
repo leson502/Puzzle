@@ -3,6 +3,7 @@
 App::App()
 {
     InitGraphic();
+    InitMedia();
     InitObject();
 }
 
@@ -11,22 +12,34 @@ void App::InitObject()
     event = new Event;
     leftbar = new PuzzleBar(graphic->getRenderer());
     leftbar->loadTexture();
-    puzzle = new Puzzle(6, graphic->getRenderer(), leftbar->GetNewTexture());
+    puzzle = new Puzzle(3, graphic->getRenderer(), leftbar->GetNewTexture());
+    globalTimer = new Timer;
+    buttonList = std::vector<Button*>(NUMBER_BUTTON, NULL);
     loadObject();
-
 }
 
 void App::InitGraphic()
 {
     graphic = new Graphic;
     graphic->InitSDL(SDL_WINDOW_SHOWN,SDL_RENDERER_ACCELERATED | 
-                                SDL_RENDERER_PRESENTVSYNC, "font/Roboto-Light.ttf");
+                                SDL_RENDERER_PRESENTVSYNC );
+}
+
+void App::InitMedia()
+{
+    media = new Game_Media();
+    media->loadFont("font/Roboto-Light.ttf");
+    media->insertChunk("sfx/effect/clack.wav");
 }
 
 void App::loadObject()
 {
     background = new Display_fullsize_object(graphic->getRenderer(),"gfx/background.jpg", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    Suffer = new Button(graphic->getRenderer(), "gfx/suffer.png",1025,480, 200,50);
+
+    buttonList[SUFFER] = new Button(graphic->getRenderer(), "gfx/suffer.png",1025,480, 200,50);
+    buttonList[PUZZLE_8] = new Button(graphic->getRenderer(), "gfx/button.png",1025,410, 200,50);
+    buttonList[PUZZLE_15] = new Button(graphic->getRenderer(), "gfx/button.png",1025,410-70, 200,50);
+    buttonList[PUZZLE_24] = new Button(graphic->getRenderer(), "gfx/button.png",1025,410-140, 200,50);
 }
 
 void App::loadAllTexture()
@@ -40,33 +53,53 @@ void App::updateRender()
 
     background->blit();
     leftbar->blit();
-    puzzle->blit(1);
-    Suffer->blit();
+
+    if (puzzle->isGoal())
+        puzzle->blit(0);
+    else 
+        puzzle->blit(1);
+        
+    for (auto u: buttonList) u->blit();
 
     graphic->renderPresent();
 }
 
-void App::updatePuzzle()
+void App::Update()
 {
     event->updateEvent();
 
-    puzzle->MouseProcess(event->MousePosX(),event->MousePosY(),event->isLbuttonDown());
-    if ( leftbar->MouseProcess(event->MousePosX(),event->MousePosY(),event->isLbuttonDown()) )
+    int mouse_x, mouse_y, mouse_click;
+    event->getMouseStatus(mouse_x, mouse_y, mouse_click);
+
+    if (puzzle->MouseProcess(mouse_x,mouse_y,mouse_click)) 
+        media->playChunk(0);
+    leftbar->MouseProcess(mouse_x,mouse_y,mouse_click);
+    
+    for (auto u: buttonList) 
+        u->MouseProcess(mouse_x, mouse_y, mouse_click);
+    
+    if (leftbar->isCurrentChanged()) 
         puzzle->setTexture(leftbar->GetNewTexture());
         
-    puzzle->updateTilesPos();
-    if (hitBoxCheck(event->MousePosX(), event->MousePosY(), 
-                    1125-100, 480, 200, 50) && event->isLbuttonDown()) puzzle->suffer();
-    
+    if (buttonList[SUFFER]->isClicked()) puzzle->suffer();
+    if (buttonList[PUZZLE_8]->isClicked()) puzzle->resize(3);
+    if (buttonList[PUZZLE_15]->isClicked()) puzzle->resize(4);
+    if (buttonList[PUZZLE_24]->isClicked()) puzzle->resize(5);
+
+    puzzle->updateTilesPos(true);
 }
 
 void App::appLoop()
 {
     while (!event->isQuit())
     {
+        globalTimer->start();
         updateRender();
-        updatePuzzle();
-        SDL_Delay(16);
+        Update();
+        unsigned int frameTicks = globalTimer->getTicks();
+        if (frameTicks < TICKS_PER_FRAME)
+            SDL_Delay(TICKS_PER_FRAME - frameTicks);
+        globalTimer->stop();
     }
 }
 
