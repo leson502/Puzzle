@@ -13,8 +13,9 @@ void App::InitObject()
     leftbar = new PuzzleBar(graphic->getRenderer());
     leftbar->loadTexture();
     puzzle = new Puzzle(3, graphic->getRenderer(), leftbar->GetNewTexture());
+    puzzle->setFont(fontList[FONT_30], fontList[FONT_56]);
     globalTimer = new Timer;
-    buttonList = std::vector<Button*>(NUMBER_BUTTON, NULL);
+    buttonList = std::vector<Texted_button*>(NUMBER_BUTTON, NULL);
     loadObject();
 }
 
@@ -28,23 +29,39 @@ void App::InitGraphic()
 void App::InitMedia()
 {
     media = new Game_Media();
-    media->loadFont("font/Roboto-Light.ttf");
     media->insertChunk("sfx/effect/clack.wav");
+    loadFont();
 }
 
 void App::loadObject()
 {
-    background = new Display_fullsize_object(graphic->getRenderer(),"gfx/background.jpg", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    background = new Display_fullsize_object(graphic->getRenderer(),"gfx/background2.jpg", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    buttonList[SUFFER] = new Button(graphic->getRenderer(), "gfx/suffer.png",1025,480, 200,50);
-    buttonList[PUZZLE_8] = new Button(graphic->getRenderer(), "gfx/button.png",1025,410, 200,50);
-    buttonList[PUZZLE_15] = new Button(graphic->getRenderer(), "gfx/button.png",1025,410-70, 200,50);
-    buttonList[PUZZLE_24] = new Button(graphic->getRenderer(), "gfx/button.png",1025,410-140, 200,50);
+    buttonList[SUFFER] = new Texted_button(graphic->getRenderer(), "gfx/button.png",1025,600, 200,50, "Suffer");
+    buttonList[PUZZLE_8] = new Texted_button(graphic->getRenderer(), "gfx/button.png",1025,530, 200,50, "8Puzzle");
+    buttonList[PUZZLE_15] = new Texted_button(graphic->getRenderer(), "gfx/button.png",1025,460, 200,50, "15Puzzle");
+    buttonList[PUZZLE_24] = new Texted_button(graphic->getRenderer(), "gfx/button.png",1025,390, 200,50, "24Puzzle");
+    buttonList[SHOW_HIDE_NUMBER] = new Texted_button(graphic->getRenderer(), "gfx/button.png",1025,320, 200,50, "Show Number");
+
+    for(auto u:buttonList) 
+    {
+        u->setHoverEffect(2);
+        u->setFont(fontList[FONT_30]);
+        u->setTextColor(255,255,0,255);
+    }
 }
 
 void App::loadAllTexture()
 {
     loadObject();
+}
+
+void App::loadFont()
+{
+    fontList.push_back(TTF_OpenFont("font/Roboto-Light.ttf", 18));
+    fontList.push_back(TTF_OpenFont("font/Roboto-Light.ttf", 30));
+    fontList.push_back(TTF_OpenFont("font/Roboto-Light.ttf", 48));
+    fontList.push_back(TTF_OpenFont("font/Roboto-Light.ttf", 56));
 }
 
 void App::updateRender()
@@ -54,10 +71,7 @@ void App::updateRender()
     background->blit();
     leftbar->blit();
 
-    if (puzzle->isGoal())
-        puzzle->blit(0);
-    else 
-        puzzle->blit(1);
+    puzzle->blit();
         
     for (auto u: buttonList) u->blit();
 
@@ -69,10 +83,16 @@ void App::Update()
     event->updateEvent();
 
     int mouse_x, mouse_y, mouse_click;
+    Movement_key m_key = event->getMovement();
+
     event->getMouseStatus(mouse_x, mouse_y, mouse_click);
 
     if (puzzle->MouseProcess(mouse_x,mouse_y,mouse_click)) 
-        media->playChunk(0);
+        media->playChunk(MEDIA_CHUNK_CLACK);
+
+    if (puzzle->MovementProcess(m_key.up, m_key.down, m_key.left, m_key.right))
+        media->playChunk(MEDIA_CHUNK_CLACK);
+
     leftbar->MouseProcess(mouse_x,mouse_y,mouse_click);
     
     for (auto u: buttonList) 
@@ -85,8 +105,14 @@ void App::Update()
     if (buttonList[PUZZLE_8]->isClicked()) puzzle->resize(3);
     if (buttonList[PUZZLE_15]->isClicked()) puzzle->resize(4);
     if (buttonList[PUZZLE_24]->isClicked()) puzzle->resize(5);
-
-    puzzle->updateTilesPos(true);
+    if (buttonList[SHOW_HIDE_NUMBER]->isClicked()) 
+    {
+        if (puzzle->show_hide_number())
+            buttonList[SHOW_HIDE_NUMBER]->setText("Hide Number");
+        else 
+            buttonList[SHOW_HIDE_NUMBER]->setText("Show Number");
+    }
+    puzzle->updatePuzzle();
 }
 
 void App::appLoop()
@@ -110,6 +136,10 @@ void App::AppQuit()
     delete graphic;
     delete background;
     delete leftbar;
+    delete globalTimer;
+    delete media;
+    for (auto u: buttonList) delete u;
+    for (auto u: fontList) TTF_CloseFont(u);
 }
 
 void App::Play()

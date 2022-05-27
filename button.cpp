@@ -14,6 +14,7 @@ Button::Button(SDL_Renderer *render_target, std::string filename)
 {
     loadTexture(filename);
 }
+
 Button::Button(SDL_Renderer *render_target, std::string filename,int x,int y,int w,int h)
 : Button(render_target, filename)
 {
@@ -39,12 +40,50 @@ void Button::Init()
     texture = NULL;
     dstrect = new SDL_Rect;
     clicked = 0;
+    hovered = 0;
+    hoverEffect = HOVERED_NORMAL;
 }
 
 void Button::blit()
 {    
-    SDL_RenderCopy(renderer, texture, NULL, dstrect);
+    if (hovered) 
+    {
+        switch (hoverEffect)
+        {
+        case HOVERED_NORMAL:
+        {
+            SDL_RenderCopy(renderer, texture, NULL, dstrect);
+            break;
+        }
+        case HOVERED_FADE:
+        {
+            SetAlphaMod(128);
+            SDL_RenderCopy(renderer, texture, NULL, dstrect);
+            SetAlphaMod(255);
+            break;
+        }
+        case HOVERED_LARGER:
+        {
+            SDL_Rect t_dstrect = *dstrect;
+            int delta_x = (t_dstrect.w)/30;
+            int delta_y = (t_dstrect.h)/30;
+            t_dstrect.x-=delta_x;
+            t_dstrect.y-=delta_y;
+            t_dstrect.w+= (2*delta_x);
+            t_dstrect.h+= (2*delta_y);
+
+            SDL_RenderCopy(renderer, texture, NULL, &t_dstrect);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    else 
+        SDL_RenderCopy(renderer, texture, NULL, dstrect);
+
 }
+
 void Button::SetAlphaMod(const int a)
 {
     SDL_SetTextureAlphaMod(texture, a);
@@ -69,16 +108,21 @@ void Button::destroy()
 
 void Button::MouseProcess(const int x, const int y, const bool m_click)
 {
-    if (checkHitBox(x,y)) 
-    {
-        SetAlphaMod(128);
-        clicked = m_click;
-    }   
-    else 
-        SetAlphaMod(255);
+    hovered =  checkHitBox(x,y);
+    clicked = (hovered && m_click);
 }
 
 bool Button::isClicked()
 {
     return clicked;
+}
+
+bool Button::isHovered()
+{
+    return hovered;
+}
+
+void Button::setHoverEffect(int t_hoverEffect)
+{
+    hoverEffect = t_hoverEffect;
 }

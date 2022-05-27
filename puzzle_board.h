@@ -3,6 +3,9 @@
 
 #include "base.h"
 
+enum{
+    BOARD_KEY_UP, BOARD_KEY_RIGHT, BOARD_KEY_DOWN, BOARD_KEY_LEFT
+};
 
 const int row[] = { 1, 0, -1, 0 };
 const int col[] = { 0, -1, 0, 1 };
@@ -18,6 +21,7 @@ public:
     void Init(int width);
     void resize(int width);
     bool move(int i, int j);
+    bool move(int movement_key);
     int tiles_num();
     int getInversion();
     int getIndex(int i, int j);
@@ -25,5 +29,6 @@ public:
     bool isGoal();
     bool isSolvable();
     void suffer();
+    bool checkTilesIvalid(int i,int j);
 };
 #endif

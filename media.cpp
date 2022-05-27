@@ -20,11 +20,6 @@ void Game_Media::InitFont()
         SDL_Log( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
 }   
 
-void Game_Media::loadFont(std::string filename)
-{
-    mainfont = TTF_OpenFont(filename.c_str(), 28);
-}
-
 void Game_Media::insertMusic(std::string filename)
 {
     Mix_Music *t_music = Mix_LoadMUS(filename.c_str());
@@ -50,4 +45,16 @@ void Game_Media::playChunk(int index)
 {
     if (g_chunk.size() > index)
         Mix_PlayChannel(-1, g_chunk[index], 0);
+}
+
+void Game_Media::destroy()
+{
+    for (auto u:g_chunk) Mix_FreeChunk(u);
+    for (auto u:g_music) Mix_FreeMusic(u);
+
+}
+
+Game_Media::~Game_Media()
+{
+    destroy();
 }

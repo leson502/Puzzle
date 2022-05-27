@@ -1,7 +1,9 @@
 #include "puzzle_board.h"
 
 Puzzle_board::Puzzle_board()
-{}
+{
+    Init(3);
+}
 
 Puzzle_board::Puzzle_board(int width)
 {
@@ -27,16 +29,29 @@ void Puzzle_board::Init(int width)
 bool Puzzle_board::move(int i,int j)
 {
     for (int l=0; l<4; l++) 
-        if (i+col[l] == empty_x && j+row[l] == empty_y)
-        {
-            std::swap(matrix[empty_x][empty_y],matrix[i][j]);
-            empty_x=i;
-            empty_y=j;
-            return 1;
-        }
+        if (i == empty_x+row[l] && j == empty_y + col[l])
+            return move(l);
     return 0;
 }
 
+bool Puzzle_board::move(int movement_key)
+{
+    int i =empty_x + row[movement_key];
+    int j =empty_y + col[movement_key];
+    if (checkTilesIvalid(i,j))
+    {
+        std::swap(matrix[empty_x][empty_y],matrix[i][j]);
+        empty_x=i;
+        empty_y=j;
+        return 1;
+    }
+    return 0;
+}   
+
+bool Puzzle_board::checkTilesIvalid(int i,int j)
+{
+    return (0<= i && i<grid_width && 0<=j && j<grid_width);
+}
 int Puzzle_board::getInversion()
 {
     int count=0;

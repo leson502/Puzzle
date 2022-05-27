@@ -35,17 +35,36 @@ Puzzle_tile::Puzzle_tile(SDL_Renderer *render_target, int t_index)
 }
 
 Puzzle_tile::Puzzle_tile(SDL_Renderer *render_target, SDL_Texture *t_texture, int t_index)
-: Puzzle_tile(render_target, texture)
+: Puzzle_tile(render_target, t_texture)
 {
     setIndex(t_index);
 }
+
+Puzzle_tile::Puzzle_tile(SDL_Renderer *render_target, SDL_Texture *t_texture, int t_index, TTF_Font *t_font)
+: Puzzle_tile(render_target, t_texture, t_index)
+{
+    setFont(t_font);
+}
+
 void Puzzle_tile::Init()
 {
     renderer = NULL;
     texture = NULL;
     dstrect = new SDL_Rect;
     srcrect = new SDL_Rect;
+    text_renderer = new Text_rendering();
     index = 0;
+}
+
+void Puzzle_tile::setRender_target(SDL_Renderer *render_target)
+{
+    Base_object::setRender_target(render_target);
+    text_renderer->setRender_target(render_target);
+}
+
+void Puzzle_tile::setFont(TTF_Font *t_font)
+{
+    text_renderer->setFont(t_font);
 }
 
 void Puzzle_tile::loadTexture(SDL_Texture *t_texture)
@@ -63,6 +82,11 @@ void Puzzle_tile::blit()
     SDL_RenderCopy(renderer, texture, srcrect, dstrect);
 }
 
+void Puzzle_tile::blitNumber()
+{
+    text_renderer->rendetText_mid_of(std::to_string(index), dstrect->x, dstrect->y, dstrect->w, dstrect->h);
+}
+
 void Puzzle_tile::drawBorder()
 {
     SDL_RenderDrawRect(renderer, dstrect);
@@ -74,6 +98,7 @@ void Puzzle_tile::Destroy()
     texture = NULL;
     delete dstrect;
     delete srcrect;
+    delete text_renderer;
 }
 
 SDL_Rect Puzzle_tile::getSourceS()

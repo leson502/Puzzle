@@ -15,7 +15,11 @@ void PuzzleBar::Init()
 {
     renderer = NULL;
     UpButton = new Button(UPBUTTON_X, UPBUTTON_Y, BUTTON_W, BUTTON_H);
+    UpButton->setHoverEffect(1);
+
     DownButton = new Button(DOWNBUTTON_X, DOWNBUTTON_Y, BUTTON_W, BUTTON_H);
+    UpButton->setHoverEffect(1);
+    
     background = new Display_fullsize_object(BAR_ORIGIN_X, BAR_ORIGIN_Y, BAR_WIDTH, BAR_HEIGHT);
 
     tiles = std::vector<Bar_tile*>(OBJECT_NUM, NULL);

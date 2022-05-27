@@ -6,10 +6,15 @@
 #include "destination_structure.h"
 #include "event.h"
 
+enum{
+    HOVERED_NORMAL, HOVERED_FADE, HOVERED_LARGER
+};
+
 class Button : public Base_object, public Destination_structure
 {
-private:
-    bool clicked;
+protected:
+    bool hovered,clicked;
+    int hoverEffect;
 public:
     Button();
     Button(SDL_Renderer *render_target);
@@ -24,6 +29,8 @@ public:
     void loadTexture(std::string filename);
     void MouseProcess(const int x,const int y,const bool m_click);
     bool isClicked();
+    bool isHovered();
+    void setHoverEffect(int t_hoverEffect);
     SDL_Texture* getTexture();
     void destroy();
 };
