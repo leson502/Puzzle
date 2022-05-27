@@ -125,7 +125,7 @@ bool Puzzle_board::isSolvable()
     if (grid_width % 2 == 1)
         return (inversion % 2 == 0);
     else 
-        return ((inversion + grid_width- empty_y -1) %2 == 0);
+        return ((inversion + grid_width- empty_x -1) %2 == 0);
     /*
     1. If grid_width is odd, then puzzle instance is solvable if number of inversions is even.
     2. If grid_witdh is even, puzzle instance is solvable if 
