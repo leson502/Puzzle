@@ -84,11 +84,12 @@ void Puzzle_board::suffer()
     // make puzzle can be solve
     if (!isSolvable())
     {
-        if (empty_x <=1 && empty_y == 0)
-            std::swap(matrix[grid_width-1][grid_width-1], matrix[grid_width-2][grid_width-1]);
+        if (empty_x == 0 && empty_y <= 1)
+            std::swap(matrix[grid_width-1][grid_width-1], matrix[grid_width-1][grid_width-2]);
         else 
-            std::swap(matrix[0][0],matrix[1][0]);
+            std::swap(matrix[0][0],matrix[0][1]);
     } 
+    if (!isSolvable()) SDL_Log("unSolvable");
 }
 
 void Puzzle_board::resize(int width)
